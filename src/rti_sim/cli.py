@@ -9,6 +9,8 @@ from rti_sim.pipelines import stage0_ingest, stage1_preprocess
 from rti_sim.pipelines import stage2_embed
 from rti_sim.pipelines.infer_knn import load_index_and_catalog, knn_assign
 from rti_sim.embedding.encoder import TextEncoder
+from rti_sim.pipelines import stage3_cluster
+from rti_sim.pipelines.assign_cluster import run_assign
 
 app = typer.Typer(add_completion=False)
 log = get_logger()
@@ -76,6 +78,39 @@ def infer(
     out_path.parent.mkdir(parents=True, exist_ok=True)
     assign.to_parquet(out_path, index=False)
     typer.echo(str(out_path))
+
+@app.command()
+def cluster(config: str = typer.Option("configs/base.yaml", "--config", "-c")):
+    cfg = load_settings(config)
+    meta3 = stage3_cluster.run(cfg)
+    typer.echo(json.dumps(meta3, indent=2))
+
+@app.command("assign-clusters")
+def assign_clusters(
+    input: str = typer.Option(..., "--input", "-i", help="views-like parquet/csv to assign"),
+    out: str = typer.Option(..., "--out", "-o", help="Output parquet with assignments"),
+    config: str = typer.Option("configs/base.yaml", "--config", "-c"),
+):
+    cfg = load_settings(config)
+    cfgd = _cfg_dict(cfg)
+    emb_cfg = cfgd.get("embeddings", {}) or {}
+    cl_cfg = cfgd.get("cluster", {}) or {}
+    assign_cfg = cl_cfg.get("assign", {}) or {}
+
+    df = run_assign(
+        new_views_path=Path(input),
+        out_dir=Path(cfg.paths.out_dir),
+        model_name=str(emb_cfg.get("model_name", "intfloat/multilingual-e5-base")),
+        device=str(emb_cfg.get("device", "auto")),
+        normalize=bool(emb_cfg.get("normalize", True)),
+        batch_size=int(emb_cfg.get("batch_size", 64)),
+        metric=str(assign_cfg.get("metric", "cosine")),
+        outlier_threshold=assign_cfg.get("outlier_threshold", None),
+    )
+    out_path = Path(out); out_path.parent.mkdir(parents=True, exist_ok=True)
+    df.to_parquet(out_path, index=False)
+    typer.echo(str(out_path))
+
 
 def main():
     app()

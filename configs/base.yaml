@@ -69,3 +69,17 @@ ann:
     use_ivf: false        # true -> IVF, sinon Flat
     nlist: 1024
     nprobe: 8
+
+
+cluster:
+  algorithm: "kmeans"         # "kmeans" | "minibatch"
+  k: 4                        # nombre de clusters (ajuste après évaluation)
+  random_state: 42
+  max_iter: 300
+  minibatch:
+    batch_size: 2048
+
+  # assignation de nouveaux RTI
+  assign:
+    metric: "cosine"          # cosine recommandé (embeddings normalisés)
+    outlier_threshold: 0.35   # si score < seuil, renvoie cluster_id = -1 (optionnel)
