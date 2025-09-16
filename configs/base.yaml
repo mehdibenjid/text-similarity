@@ -46,3 +46,26 @@ text:
 
 run:
   run_id_prefix: "dev"
+
+embeddings:
+  model_name: "intfloat/multilingual-e5-base" #"C:/hf-cache/models--intfloat--multilingual-e5-base/snapshots/<hash>"   # multilingue FR/EN
+  batch_size: 64
+  device: "auto"                                # "cpu", "cuda", "auto"
+  normalize: true
+  # pondérations des champs
+  weights:
+    title_text: 2.0
+    chap_titles_text: 1.0
+    meta_text: 0.5
+  # préfixe requis par E5
+  e5_prefix: "passage: "
+
+ann:
+  backend: "faiss"        # "faiss" ou "sklearn"
+  metric: "cosine"        # cosine pour embeddings normalisés
+  n_neighbors: 10
+  # FAISS coarse params (ignorés si sklearn)
+  faiss:
+    use_ivf: false        # true -> IVF, sinon Flat
+    nlist: 1024
+    nprobe: 8

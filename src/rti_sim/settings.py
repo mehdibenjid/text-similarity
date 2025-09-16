@@ -20,6 +20,10 @@ class Settings(BaseModel):
     columns: dict = {}
     filters: dict = {}
     text: dict = {}
+    embeddings: dict = {}
+    ann: dict = {}
+    class Config:
+        extra = "allow"
 
 def load_settings(path: str | Path) -> Settings:
     with open(path, "r", encoding="utf-8") as f:
