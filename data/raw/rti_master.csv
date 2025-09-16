@@ -1,0 +1,11 @@
+AC_MSN,GTI_NUMBER,RTI_NUMBER,TITLE,WORKLOAD
+99999,GTI001,RTI001,Hydraulic Pump Failure,8
+99999,GTI001,RTI002,Hydraulic Pressure Drop,5
+99999,GTI002,RTI003,Avionics Cooling Issue,2
+99999,GTI002,RTI004,Display Flickering,3
+99999,GTI003,RTI005,Engine Overheat Alert,9
+99999,GTI003,RTI006,Fuel Leak Detection,7
+99999,GTI004,RTI007,Cabin Temperature Control,4
+99999,GTI004,RTI008,Air Conditioning Noise,1
+99999,GTI005,RTI009,Landing Gear Retraction Delay,10
+99999,GTI005,RTI010,Brake System Check,6

@@ -1,0 +1,48 @@
+paths:
+  rti_master: data/raw/rti_master.csv
+  rti_chapters: data/raw/rti_chapters.csv
+  interim_dir: data/interim/
+  processed_dir: data/processed/
+  out_dir: artifacts/
+
+io:
+  csv:
+    encoding: "utf-8"
+    sep: ","
+    quotechar: '"'
+    on_bad_lines: "skip"
+
+# Keep only these columns (canonical names) after aliasing
+columns:
+  master_keep: ["AC_MSN", "gti_number", "rti_number", "title", "workload"]
+  chapters_keep: ["AC_MSN", "gti_number", "rti_number", "chapter_number", "chapter_title", "attestation_type"]
+
+  # Per-table alias maps: raw_header -> canonical_name
+  aliases_master:
+    AC_MSN: AC_MSN
+    GTI_NUMBER: gti_number
+    RTI_NUMBER: rti_number
+    TITLE: title
+    WORKLOAD: workload
+
+  aliases_chapters:
+    AC_MSN: AC_MSN
+    GTI_NUMBER: gti_number
+    RTI_NUMBER: rti_number
+    CHAPTER_NUMBER: chapter_number
+    TITLE: chapter_title               # in chapters, TITLE is the chapter title
+    ATTESTATION_TYPE: attestation_type
+
+# Filter: only keep AC_MSN == "99999"
+filters:
+  ac_msn_equals: "99999"
+  drop_ac_msn_after_filter: true
+
+text:
+  generic_headings:
+    fr: ["introduction","résumé","conclusion","annexe","appendice","sommaire"]
+    en: ["introduction","summary","conclusion","annex","appendix","table of contents","overview","background"]
+  meta_cols: ["workload","attestation_type"]
+
+run:
+  run_id_prefix: "dev"

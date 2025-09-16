@@ -1,0 +1,14 @@
+# 1) Activate your conda env and install minimal deps
+conda activate venv
+python -m pip install -U pip
+python -m pip install typer pydantic pyyaml rich
+
+# 2) Tell Python where src/ lives (current terminal session)
+$env:PYTHONPATH = (Resolve-Path .\src)
+
+# 3) Run Stage 0 train
+python -m rti_sim.cli train --config configs\base.yaml
+
+# 4) (Optional) Run infer stub
+mkdir out 2>$null
+python -m rti_sim.cli infer --input data\new.parquet --out out\assignments.parquet --config configs\base.yaml
