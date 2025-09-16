@@ -11,6 +11,8 @@ from rti_sim.pipelines.infer_knn import load_index_and_catalog, knn_assign
 from rti_sim.embedding.encoder import TextEncoder
 from rti_sim.pipelines import stage3_cluster
 from rti_sim.pipelines.assign_cluster import run_assign
+from rti_sim.pipelines.stage4_report import run as cluster_report_run
+from rti_sim.pipelines.stage5_tune import run as cluster_tune_run
 
 app = typer.Typer(add_completion=False)
 log = get_logger()
@@ -110,6 +112,22 @@ def assign_clusters(
     out_path = Path(out); out_path.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(out_path, index=False)
     typer.echo(str(out_path))
+
+@app.command("cluster-report")
+def cluster_report(
+    config: str = typer.Option("configs/base.yaml", "--config", "-c", help="Path to YAML config")
+):
+    cfg = load_settings(config)
+    meta4 = cluster_report_run(cfg)
+    typer.echo(json.dumps(meta4, indent=2))
+
+@app.command("cluster-tune")
+def cluster_tune(
+    config: str = typer.Option("configs/base.yaml", "--config", "-c"),
+):
+    cfg = load_settings(config)
+    meta = cluster_tune_run(cfg)
+    typer.echo(json.dumps(meta, indent=2))
 
 
 def main():
